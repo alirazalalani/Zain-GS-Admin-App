@@ -30,7 +30,7 @@ const OrderDetails = () => {
 
   const navigation: any = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const {address, items, name, phone, date, orderId, status, total, dc} =
+  const {address, items, name, phone, date, orderId, status, total, dc, area} =
     route.params;
   const parts = orderId.split('-');
   const formattedId = parts[0] + '.....' + parts[parts.length - 1];
@@ -322,6 +322,13 @@ const OrderDetails = () => {
               }}>
               <Text style={styles.headings}>Address</Text>
               <View style={{width: '100%'}}>
+                <Text
+                  style={{
+                    fontFamily: FONTS.POPPINS_SEMI_BOLD,
+                    color: COLOR.SUB_HEADING,
+                  }}>
+                  {area}
+                </Text>
                 <Text style={styles.HeadingDetails}>{address}</Text>
               </View>
             </View>

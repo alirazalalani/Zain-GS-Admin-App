@@ -25,34 +25,68 @@ const ShopScreen = () => {
   const [cat, setCat] = useState<any>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  const getCategories = async () => {
-    setIsLoading(true);
+  const [categoryCount, setCategoryCount] = useState();
+  const [loadData, setLoadData] = useState(false);
+
+  // const getCategories = async () => {
+  //   setIsLoading(true);
+  //   const response = await apiMiddleware({
+  //     url: '/cat/category',
+  //     method: 'get',
+  //     navigation,
+  //   });
+  //   if (response) {
+  //     setCat(response.data);
+  //     setIsLoading(false);
+  //     setRefreshing(false);
+  //   }
+  //   setIsLoading(false);
+  //   setRefreshing(false);
+  // };
+
+  const getCategories = async (offset: number) => {
+    if (cat.length == 0) {
+      setIsLoading(true);
+    }
+
     const response = await apiMiddleware({
-      url: '/cat/category',
+      url: `/cat/category?offset=${offset}`,
       method: 'get',
       navigation,
     });
+    console.log(response, 'RESPONSE');
     if (response) {
-      setCat(response.data);
-      setIsLoading(false);
+      setCategoryCount(response?.count);
+      if (cat?.length > 0) {
+        setCat([...cat, ...response?.data]);
+      } else {
+        setCat(response?.data);
+      }
+      setLoadData(false);
       setRefreshing(false);
     }
     setIsLoading(false);
     setRefreshing(false);
   };
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await getCategories();
+    await getCategories(0);
   }, []);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     getCategories();
-  //   }, []),
-  // );
+  const handleScroll = event => {
+    const {contentOffset, layoutMeasurement, contentSize} = event.nativeEvent;
+    const offsetY = contentOffset.y;
+    const contentHeight = contentSize.height;
+    const viewportHeight = layoutMeasurement.height;
+    if (offsetY + viewportHeight >= contentHeight - 20 && !loadData) {
+      if (categoryCount > cat?.length) {
+        setLoadData(true);
+        getCategories(cat.length);
+      }
+    }
+  };
   useEffect(() => {
-    getCategories();
+    getCategories(0);
   }, []);
   return (
     <View style={styles.container}>
@@ -117,6 +151,7 @@ const ShopScreen = () => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          onScroll={handleScroll}
           keyExtractor={(item, index) => item._id}
           numColumns={2}
           contentContainerStyle={{
@@ -181,6 +216,13 @@ const ShopScreen = () => {
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator size={'large'} color={COLOR.PRIMARY_COLOR} />
         </View>
+      )}
+      {loadData && (
+        <ActivityIndicator
+          size={'small'}
+          color={COLOR.PRIMARY_COLOR}
+          style={{marginVertical: 10}}
+        />
       )}
     </View>
   );

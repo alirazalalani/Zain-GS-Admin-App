@@ -31,16 +31,45 @@ const AllProductScreen = () => {
   const [allItems, setAllItems] = useState<any>([]);
   const navigation: any = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const getItems = async () => {
-    setIsLoading(true);
+  const [loadData, setLoadData] = useState(false);
+  const [itemCount, setItemCount] = useState();
+  const getItems = async (offset: number) => {
+    if (allItems.length == 0) {
+      setIsLoading(true);
+    }
+
     const response = await apiMiddleware({
-      url: `/item/all?categoryId=${categoryId}`,
+      url: `/item/all?categoryId=${categoryId}&offset=${offset}`,
       method: 'get',
       navigation,
     });
-    // console.log({response: response.data});
-    setAllItems(response.data);
+    if (response) {
+      console.log({resp: response.data});
+      // setAllItems(response.data);
+      setItemCount(response?.count);
+      if (allItems?.length > 0) {
+        setAllItems([...allItems, ...response?.data]);
+      } else {
+        setAllItems(response?.data);
+      }
+      setLoadData(false);
+      setIsLoading(false);
+      // dispatch(LOADERSTOP());
+    }
+    // dispatch(LOADERSTOP());
     setIsLoading(false);
+  };
+  const handleScroll = event => {
+    const {contentOffset, layoutMeasurement, contentSize} = event.nativeEvent;
+    const offsetY = contentOffset.y;
+    const contentHeight = contentSize.height;
+    const viewportHeight = layoutMeasurement.height;
+    if (offsetY + viewportHeight >= contentHeight - 20 && !loadData) {
+      if (itemCount > allItems?.length) {
+        setLoadData(true);
+        getItems(allItems.length);
+      }
+    }
   };
 
   // useFocusEffect(
@@ -49,7 +78,7 @@ const AllProductScreen = () => {
   //   }, []),
   // );
   useEffect(() => {
-    getItems();
+    getItems(0);
   }, []);
   return (
     <View style={styles.container}>
@@ -102,6 +131,7 @@ const AllProductScreen = () => {
           showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => item._id}
           numColumns={2}
+          onScroll={handleScroll}
           contentContainerStyle={{
             marginTop: responsiveHeight(3.5),
             paddingBottom: responsiveHeight(5),
@@ -201,6 +231,29 @@ const AllProductScreen = () => {
       {isLoading && (
         <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
           <ActivityIndicator size={'large'} color={COLOR.PRIMARY_COLOR} />
+        </View>
+      )}
+      {loadData && (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              fontSize: responsiveFontSize(1.8),
+              color: COLOR.PRIMARY_COLOR,
+              fontFamily: FONTS.POPPINS_SEMI_BOLD,
+              marginRight: 10,
+            }}>
+            Loading More Data
+          </Text>
+          <ActivityIndicator
+            size={'small'}
+            color={COLOR.PRIMARY_COLOR}
+            style={{marginVertical: 10}}
+          />
         </View>
       )}
       {allItems.length === 0 && !isLoading && (

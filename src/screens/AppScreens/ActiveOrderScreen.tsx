@@ -75,6 +75,7 @@ const ActiveOrderScreen = () => {
               // console.log('bhai end');
             }}
             renderItem={({item, index}) => {
+              console.log(item, 'ITEM23312124');
               const date = new Date(item.createdAt);
 
               const options: any = {
@@ -166,6 +167,13 @@ const ActiveOrderScreen = () => {
                       <Text
                         style={{
                           marginTop: 10,
+                          fontFamily: FONTS.POPPINS_SEMI_BOLD,
+                          color: COLOR.SUB_HEADING,
+                        }}>
+                        {item?.location_area}
+                      </Text>
+                      <Text
+                        style={{
                           fontFamily: FONTS.POPPINS_REGULAR,
                           color: COLOR.SUB_HEADING,
                         }}>
@@ -198,6 +206,7 @@ const ActiveOrderScreen = () => {
                           status: item.status,
                           total: +item.amount,
                           dc: +item.delivery_fee,
+                          area: item.location_area,
                         });
                       }}
                       style={{

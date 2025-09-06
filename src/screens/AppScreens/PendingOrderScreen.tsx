@@ -175,6 +175,13 @@ const PendingOrderScreen = () => {
                       <Text
                         style={{
                           marginTop: 10,
+                          fontFamily: FONTS.POPPINS_SEMI_BOLD,
+                          color: COLOR.SUB_HEADING,
+                        }}>
+                        {item?.location_area}
+                      </Text>
+                      <Text
+                        style={{
                           fontFamily: FONTS.POPPINS_REGULAR,
                           color: COLOR.SUB_HEADING,
                         }}>
@@ -207,6 +214,7 @@ const PendingOrderScreen = () => {
                           status: item.status,
                           total: +item.amount,
                           dc: +item.delivery_fee,
+                          area: item?.location_area,
                         });
                       }}
                       style={{
