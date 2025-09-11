@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "23766203112",
     "project_id": "zain-gs-admin",
-    "storage_bucket": "zain-gs-admin.appspot.com"
+    "storage_bucket": "zain-gs-admin.firebasestorage.app"
   },
   "client": [
     {
