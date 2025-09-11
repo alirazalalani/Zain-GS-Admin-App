@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  Linking,
   Modal,
   ScrollView,
   StyleSheet,
@@ -61,6 +62,46 @@ const OrderDetails = () => {
     }
     setPickup(false);
     setReject(false);
+  };
+
+  const makeWhatsAppLink = number => {
+    // Remove any non-digit characters just in case
+    number = number.replace(/\D/g, '');
+
+    // If number starts with "0", replace it with "92"
+    if (number.startsWith('0')) {
+      number = '92' + number.slice(1);
+    }
+
+    // items.map(item => {
+    //   console.log({item});
+    // });
+    // let message = {
+    //   amount: total,
+    //   name: ['name', 'ali', 'ok'],
+    // };
+    // message = JSON.stringify(message);
+
+    console.log(number, 'number');
+    const encodedMessage = encodeURIComponent(
+      // message,
+
+      `Dear customer, thanks for choosing Zain General Store.  
+Is your order confirmed for the amount of ${
+        total + dc
+      }? Or do you want anything more to order?
+
+معزز گاہک، زین جنرل اسٹور کو منتخب کرنے کا شکریہ۔  
+کیا آپ کا آرڈر ${
+        total + dc
+      } کی رقم کے لیے کنفرم ہے؟ یا آپ مزید کچھ آرڈر کرنا چاہتے ہیں؟
+
+ `,
+    );
+
+    const url = `https://wa.me/${number}${`?text=${encodedMessage}`}`;
+
+    Linking.openURL(url).catch(err => alert(err));
   };
 
   return (
@@ -288,13 +329,16 @@ const OrderDetails = () => {
                   }}>
                   <IMAGES.Phone height={20} width={20} />
                 </View>
-                <View
+                <TouchableOpacity
+                  onPress={() => {
+                    makeWhatsAppLink(phone);
+                  }}
                   style={{
                     marginLeft: responsiveWidth(1.5),
                   }}>
                   <Text style={styles.headings}>Phone</Text>
                   <Text style={styles.HeadingDetails}>{phone}</Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

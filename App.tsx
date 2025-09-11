@@ -9,25 +9,62 @@ import FlashMessage from 'react-native-flash-message';
 import {Provider} from 'react-redux';
 import {store} from './src/redux/store';
 import messaging from '@react-native-firebase/messaging';
-import {
-  notificationListner,
-  onDisplayNotification,
-  requestUserPermission,
-} from './src/utils/Notification';
+// import {
+//   notificationListner,
+//   onDisplayNotification,
+//   requestUserPermission,
+// } from './src/utils/Notification';
 import InfoModal from './src/components/InfoModal';
 import NetInfo from '@react-native-community/netinfo';
-import { IMAGES } from './src/constants';
+import {IMAGES} from './src/constants';
+import {
+  getFcmToken,
+  notificationListner,
+  requestUserPermission,
+} from './src/utils/Notification';
+import Permissions from './src/utils/permissions';
+import {Platform} from 'react-native';
+import notifee from '@notifee/react-native';
 
 // messaging().setBackgroundMessageHandler(async remoteMessage => {
 //   console.log('Message handled in the background!', remoteMessage);
 //   onDisplayNotification(remoteMessage);
 // });
 
+notifee.onBackgroundEvent(async ({type, detail}) => {});
+
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState();
   const [isConnected, setIsConnected] = useState<any>(true);
 
+  //   if (Platform.OS === 'android') {
+  //     if (Platform.Version >= 33) {
+  //       Permissions?.checkNotificationPermission()
+  //         .then(async res => {
+  //           // await FirebaseNotifications.notificationListener();
+  //         })
+  //         .catch(e => {
+  //           console.log('e notification perm', e);
+  //         });
+  //     } else {
+  //       await FirebaseNotifications.requestUserPermission();
+  //       // await FirebaseNotifications.notificationListener();
+  //     }
+  //   } else {
+  //     let permitted = await FirebaseNotifications.requestUserPermission();
+
+  //     if (permitted) {
+  //       // await FirebaseNotifications.notificationListener();
+  //     }
+  //   }
+
+  //   return () => {
+  //     if (FirebaseNotifications.foreGroundListener) {
+  //       FirebaseNotifications.foreGroundListener;
+  //     }
+  //   };
+  // };
   const getData = async () => {
     try {
       const getUserItem: any = await AsyncStorage.getItem('userData');
@@ -41,9 +78,43 @@ const App = () => {
     }
   };
 
+  const getPushNotifications = async () => {
+    if (Platform.OS === 'android') {
+      if (Platform.Version >= 33) {
+        Permissions?.checkNotificationPermission()
+          .then(async res => {
+            await getFcmToken();
+            await notificationListner();
+            // await FirebaseNotifications.notificationListener();
+          })
+          .catch(e => {
+            console.log('e notification perm', e);
+          });
+      } else {
+        await requestUserPermission().then(async () => {
+          await notificationListner();
+        });
+
+        // await FirebaseNotifications.notificationListener();
+      }
+    } else {
+      let permitted = await requestUserPermission();
+
+      if (permitted) {
+        await notificationListner();
+
+        // await FirebaseNotifications.notificationListener();
+      }
+    }
+
+    // return () => {
+    //   if (FirebaseNotifications.foreGroundListener) {
+    //     FirebaseNotifications.foreGroundListener;
+    //   }
+    // };
+  };
   useEffect(() => {
-    requestUserPermission();
-    notificationListner();
+    getPushNotifications();
     getData();
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);

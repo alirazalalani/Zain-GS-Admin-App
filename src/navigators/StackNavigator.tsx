@@ -5,16 +5,21 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from '../screens/AuthScreens/LoginScreen';
 import SignupScreen from '../screens/AuthScreens/SignupScreen';
 import AppStack from './AppStack';
+import messaging from '@react-native-firebase/messaging';
+// import FirebaseNotification from '../utils/Notification';
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
+  // messaging().setBackgroundMessageHandler(
+  //   FirebaseNotification.setBackgroundMessageHandler,
+  // );
   return (
     // <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
-        <Stack.Screen name="AppStack" component={AppStack} />
-      </Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="AppStack" component={AppStack} />
+    </Stack.Navigator>
     // </NavigationContainer>
   );
 };
