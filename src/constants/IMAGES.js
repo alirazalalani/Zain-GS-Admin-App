@@ -30,8 +30,10 @@ import NoInternet from '../assets/img/svg/NoInternet.svg';
 import OLD from '../assets/img/svg/OLD.svg';
 import New from '../assets/img/svg/NEW.svg';
 import Logo from '../assets/img/svg/logo.svg';
+import Order from '../assets/img/order.png';
 
 export default {
+  Order,
   Home,
   HomeFocused,
   Cart,

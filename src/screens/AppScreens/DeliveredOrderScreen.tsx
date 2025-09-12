@@ -37,6 +37,7 @@ const DeliveredOrderScreen = () => {
       setOrders(response);
       setIsLoading(false);
       setRefreshing(false);
+      console.log({response});
     }
   };
 
@@ -160,6 +161,7 @@ const DeliveredOrderScreen = () => {
                         text="Delivery Location"
                         Imaged={IMAGES.HomeCard}
                       />
+
                       <Text
                         style={{
                           marginTop: 10,
@@ -168,6 +170,7 @@ const DeliveredOrderScreen = () => {
                         }}>
                         {item?.location_area}
                       </Text>
+
                       <Text
                         style={{
                           fontFamily: FONTS.POPPINS_REGULAR,
@@ -177,7 +180,10 @@ const DeliveredOrderScreen = () => {
                       </Text>
 
                       <View style={styles.lineView} />
-
+                      <CardText
+                        name={'Order Type'}
+                        value={`${item?.orderType.toUpperCase()}`}
+                      />
                       <CardText
                         name={'Ordered By'}
                         value={`${item.orderByUser}`}
@@ -203,6 +209,7 @@ const DeliveredOrderScreen = () => {
                           total: +item?.amount,
                           dc: +item.delivery_fee,
                           area: item?.location_area,
+                          orderType: item?.orderType,
                         });
                       }}
                       style={{

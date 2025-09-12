@@ -31,8 +31,19 @@ const OrderDetails = () => {
 
   const navigation: any = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const {address, items, name, phone, date, orderId, status, total, dc, area} =
-    route.params;
+  const {
+    address,
+    items,
+    name,
+    phone,
+    date,
+    orderId,
+    status,
+    total,
+    dc,
+    area,
+    orderType,
+  } = route.params;
   const parts = orderId.split('-');
   const formattedId = parts[0] + '.....' + parts[parts.length - 1];
 
@@ -343,7 +354,55 @@ Is your order confirmed for the amount of ${
             </View>
           </View>
 
-          <View style={{flexDirection: 'row', marginVertical: 10}}>
+          {/*  */}
+          <View style={styles.namePhone}>
+            <View style={{flexDirection: 'row'}}>
+              <View style={{justifyContent: 'center'}}>
+                <IMAGES.Date height={20} width={20} />
+              </View>
+              <View
+                style={{
+                  marginLeft: responsiveWidth(1.5),
+                }}>
+                <Text style={styles.headings}>Date</Text>
+                <Text style={styles.HeadingDetails}>{date}</Text>
+              </View>
+            </View>
+            {/*  */}
+            <View>
+              <View
+                style={{
+                  marginRight: responsiveWidth(3),
+                  flexDirection: 'row',
+                }}>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={IMAGES.Order}
+                    style={{width: 20, height: 20}}
+                    resizeMode="contain"
+                  />
+                  {/* <IMAGES.Phone height={20} width={20} /> */}
+                </View>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  style={{
+                    marginLeft: responsiveWidth(1.5),
+                  }}>
+                  <Text style={styles.headings}>Order Type</Text>
+                  <Text style={styles.HeadingDetails}>
+                    {orderType?.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+
+          {/*  */}
+
+          {/* <View style={{flexDirection: 'row', marginVertical: 10}}>
             <View style={{justifyContent: 'center'}}>
               <IMAGES.Date height={20} width={20} />
             </View>
@@ -354,7 +413,7 @@ Is your order confirmed for the amount of ${
               <Text style={styles.headings}>Date</Text>
               <Text style={styles.HeadingDetails}>{date}</Text>
             </View>
-          </View>
+          </View> */}
           {/*  */}
           <View style={{flexDirection: 'row', marginVertical: 10}}>
             <View>
@@ -365,7 +424,7 @@ Is your order confirmed for the amount of ${
                 marginLeft: 5,
               }}>
               <Text style={styles.headings}>Address</Text>
-              <View style={{width: '100%'}}>
+              <View style={{width: '90%'}}>
                 <Text
                   style={{
                     fontFamily: FONTS.POPPINS_SEMI_BOLD,

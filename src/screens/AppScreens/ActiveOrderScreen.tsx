@@ -181,7 +181,10 @@ const ActiveOrderScreen = () => {
                       </Text>
 
                       <View style={styles.lineView} />
-
+                      <CardText
+                        name={'Order Type'}
+                        value={`${item?.orderType.toUpperCase()}`}
+                      />
                       <CardText
                         name={'Ordered By'}
                         value={`${item.orderByUser}`}
@@ -207,6 +210,7 @@ const ActiveOrderScreen = () => {
                           total: +item.amount,
                           dc: +item.delivery_fee,
                           area: item.location_area,
+                          orderType: item?.orderType,
                         });
                       }}
                       style={{
