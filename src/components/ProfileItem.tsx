@@ -19,6 +19,7 @@ const ProfileItem = ({name, Img, onPress}: any) => {
           alignItems: 'center',
           paddingHorizontal: responsiveWidth(5.2),
           paddingVertical: responsiveHeight(1.5),
+          marginTop: responsiveHeight(2),
         }}>
         <View
           style={{

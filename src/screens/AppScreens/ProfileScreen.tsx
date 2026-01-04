@@ -1,5 +1,15 @@
-import {StyleSheet, Text, View, StatusBar, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  Image,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {COLOR, FONTS, IMAGES} from '../../constants';
 import {
   responsiveFontSize,
@@ -12,6 +22,7 @@ import Button from '../../components/Button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {apiMiddleware} from '../../utils/HelperFunction';
+import {successMessage} from '../../utils/ErrorMsg';
 
 const ProfileScreen = () => {
   const [user, setUser] = useState<any>({});
@@ -30,6 +41,10 @@ const ProfileScreen = () => {
   );
   const navigation: any = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   return (
     <View style={styles.container}>
       <StatusBar
@@ -79,6 +94,11 @@ const ProfileScreen = () => {
         </View>
       </View>
 
+      <ProfileItem
+        name={'Notification'}
+        Img={IMAGES.Orders}
+        onPress={() => setModalVisible(true)}
+      />
       {/* <ProfileItem
         name={'Orders'}
         Img={IMAGES.Orders}
@@ -120,6 +140,72 @@ const ProfileScreen = () => {
           }}
         />
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+          <View style={styles.centeredView}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalTitle}>Send Notification</Text>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Title"
+                  placeholderTextColor={COLOR.GREY}
+                  value={title}
+                  onChangeText={setTitle}
+                />
+
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  placeholder="Description"
+                  placeholderTextColor={COLOR.GREY}
+                  value={description}
+                  onChangeText={setDescription}
+                  multiline={true}
+                  numberOfLines={4}
+                />
+
+                <Button
+                  title="Send"
+                  isLoading={isSending}
+                  style={{width: '100%', marginTop: responsiveHeight(1)}}
+                  onPress={async () => {
+                    if (title && description) {
+                      setIsSending(true);
+                      const response = await apiMiddleware({
+                        url: '/notification/send',
+                        method: 'post',
+                        data: {
+                          title: title,
+                          body: description,
+                        },
+                        navigation: navigation,
+                      });
+
+                      setIsSending(false);
+
+                      if (response) {
+                        setModalVisible(false);
+                        setTitle('');
+                        setDescription('');
+                        successMessage('Notification sent successfully');
+                      }
+                    } else {
+                      // Optional: Show alert if empty
+                    }
+                  }}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -130,5 +216,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR.BACKGROUND_COLOR,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalView: {
+    width: '85%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: responsiveFontSize(2.2),
+    fontFamily: FONTS.POPPINS_SEMI_BOLD,
+    marginBottom: 15,
+    color: COLOR.PRIMARY_COLOR,
+  },
+  input: {
+    width: '100%',
+    backgroundColor: COLOR.TEXTFIELD_BACKGROUND,
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    fontFamily: FONTS.POPPINS_REGULAR,
+    fontSize: responsiveFontSize(1.8),
+    color: COLOR.SUB_HEADING,
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
   },
 });

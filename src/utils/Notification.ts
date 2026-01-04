@@ -1,24 +1,20 @@
-import {
-  AuthorizationStatus,
-  getMessaging,
-  getToken,
-} from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import {Alert, Platform} from 'react-native';
 import notifee, {AndroidImportance} from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {getApp} from '@react-native-firebase/app';
 
-const messaging = getMessaging(getApp());
+// const messaging = getMessaging(getApp());
 
 export const requestUserPermission = async () => {
   const settings = await notifee.requestPermission();
   if (
-    settings.authorizationStatus === AuthorizationStatus.DENIED ||
-    settings.authorizationStatus === AuthorizationStatus.NOT_DETERMINED
+    settings.authorizationStatus === 0 || // AuthorizationStatus.DENIED
+    settings.authorizationStatus === -1 // AuthorizationStatus.NOT_DETERMINED
   ) {
-    console.log('Notification Permission deniesd');
+    console.log('Notification Permission denied');
     return false;
   }
+  return true;
 };
 export const getFcmToken = async () => {
   try {
@@ -31,7 +27,7 @@ export const getFcmToken = async () => {
       console.log('adn');
       // const token = await getToken(messaging);
 
-      const fcmToken: any = await getToken(messaging);
+      const fcmToken: any = await messaging().getToken();
 
       console.log({fcmToken});
       if (fcmToken) {
@@ -41,63 +37,66 @@ export const getFcmToken = async () => {
     } else {
       console.log(parseFcm, 'old token');
     }
-  } catch (e) {
-    Alert.alert('error raised in fcm token', e);
+  } catch (e: any) {
+    Alert.alert('error raised in fcm token', e.message || String(e));
   }
 };
 export async function onDisplayNotification(data: any) {
-  // Request permissions (required for iOS)
-  // await notifee.requestPermission()
-
   // Create a channel (required for Android)
   const channelId = await notifee.createChannel({
-    id: 'default',
-    name: 'Default Channel',
+    id: 'custom_sound_channel_v1',
+    name: 'Custom Sound Channel',
     sound: 'check',
     importance: AndroidImportance.HIGH,
     vibration: true,
   });
 
   await notifee.displayNotification({
-    title: data?.notification?.title,
-    // subtitle: '&#129395;',
-    body: data?.notification?.body,
-
+    title: data?.notification?.title || data?.data?.title,
+    body: data?.notification?.body || data?.data?.body,
     android: {
       channelId,
-      sound: 'check', // Ex
+      sound: 'check',
+      pressAction: {
+        id: 'default',
+      },
     },
   });
 }
 
 export const notificationListner = async () => {
-  messaging.onNotificationOpenedApp(remoteMessage => {
+  // Create the channel immediately so it's ready for background FCM notifications
+  await notifee.createChannel({
+    id: 'custom_sound_channel_v1',
+    name: 'Custom Sound Channel',
+    sound: 'check',
+    importance: AndroidImportance.HIGH,
+    vibration: true,
+  });
+
+  // Foreground messages
+  messaging().onMessage(async remoteMessage => {
+    console.log('Received in foreground', remoteMessage);
+    await onDisplayNotification(remoteMessage);
+  });
+
+  // Background to Foreground
+  messaging().onNotificationOpenedApp(remoteMessage => {
     console.log(
       'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
-    // navigation.navigate(remoteMessage.data.type);
   });
 
-  messaging.onMessage(async remoteMessage => {
-    console.log('recived in foreground', remoteMessage);
-    onDisplayNotification(remoteMessage);
-  });
-  messaging.setBackgroundMessageHandler(async onMessageReceived => {
-    console.log('sayenn bg working of firebsae');
-    onDisplayNotification(onMessageReceived);
-  });
-
-  messaging.getInitialNotification().then(remoteMessage => {
-    if (remoteMessage) {
-      console.log(
-        'Notification caused app to open from quit state:',
-        remoteMessage.notification,
-      );
-      // onDisplayNotification(remoteMessage);
-
-      // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
-    }
-    // setLoading(false);
-  });
+  // Killed to Foreground
+  messaging()
+    .getInitialNotification()
+    .then(remoteMessage => {
+      if (remoteMessage) {
+        console.log(
+          'Notification caused app to open from quit state:',
+          remoteMessage.notification,
+        );
+      }
+    });
 };

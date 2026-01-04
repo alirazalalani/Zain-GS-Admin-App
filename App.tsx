@@ -24,16 +24,29 @@ import {
 } from './src/utils/Notification';
 import Permissions from './src/utils/permissions';
 import {Platform} from 'react-native';
-import notifee from '@notifee/react-native';
+import notifee, {EventType} from '@notifee/react-native';
 
 // messaging().setBackgroundMessageHandler(async remoteMessage => {
 //   console.log('Message handled in the background!', remoteMessage);
 //   onDisplayNotification(remoteMessage);
 // });
 
-notifee.onBackgroundEvent(async ({type, detail}) => {});
-
 const App = () => {
+  useEffect(() => {
+    const unsubscribe = notifee.onForegroundEvent(({type, detail}) => {
+      switch (type) {
+        case EventType.DISMISSED:
+          console.log('User dismissed notification', detail.notification);
+          break;
+        case EventType.PRESS:
+          console.log('User pressed notification', detail.notification);
+          break;
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState();
   const [isConnected, setIsConnected] = useState<any>(true);
@@ -92,6 +105,7 @@ const App = () => {
           });
       } else {
         await requestUserPermission().then(async () => {
+          await getFcmToken();
           await notificationListner();
         });
 
@@ -101,6 +115,7 @@ const App = () => {
       let permitted = await requestUserPermission();
 
       if (permitted) {
+        await getFcmToken();
         await notificationListner();
 
         // await FirebaseNotifications.notificationListener();
