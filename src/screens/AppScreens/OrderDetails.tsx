@@ -23,9 +23,11 @@ import {apiMiddleware, setColor} from '../../utils/HelperFunction';
 import Button from '../../components/Button';
 import {Avatar} from '@rneui/base';
 import {OrderStatus} from '../../constants/ENUMS';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const OrderDetails = () => {
   const route: any = useRoute();
+  const insets = useSafeAreaInsets();
   const [pickup, setPickup] = useState(false);
   const [reject, setReject] = useState(false);
 
@@ -116,7 +118,13 @@ Is your order confirmed for the amount of ${
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+        },
+      ]}>
       <StatusBar
         backgroundColor={COLOR.BACKGROUND_COLOR}
         barStyle={'dark-content'}

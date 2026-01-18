@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Modal,
 } from 'react-native';
-import ImagePicker from 'react-native-image-crop-picker';
+// import ImagePicker from 'react-native-image-crop-picker';
 import React, {useState, useEffect} from 'react';
 import {COLOR, FONTS, IMAGES} from '../../constants';
 import Heading from '../../components/Heading';
@@ -73,59 +73,59 @@ const UserDetailsScreen = () => {
     }
   };
 
-  const updateProfile = async (details: any) => {
-    setIsLoading(true);
-    // console.log({details});
-    const data = {
-      username: details?.username,
-      mobile: details?.mobile,
-      address: details?.address,
-    };
-    const response = await apiMiddleware({
-      url: '/user/update',
-      method: 'put',
-      contentType: Content_Type.FORM_DATA,
-      data: createFormData(data),
-      navigation,
-    });
-    if (response) {
-      // console.log({response});
-      const getItems: any = await AsyncStorage.getItem('userData');
-      const parsedItem: any = await JSON.parse(getItems);
-      parsedItem.username = details?.username;
-      parsedItem.address = details?.address;
-      parsedItem.mobile = details?.mobile;
-      successMessage(response.message);
-      setIsLoading(false);
-      setShow(false);
-      const stringifyResponse = await JSON.stringify(parsedItem);
-      await AsyncStorage.setItem('userData', stringifyResponse);
-    }
-    setIsLoading(false);
-  };
-  const SelectImageFromGallery = async () => {
-    await ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: true,
-    }).then(async (image: any) => {
-      // console.log(image);
-      setOpenModal(false);
-      await setImage(image);
-    });
-  };
+  // const updateProfile = async (details: any) => {
+  //   setIsLoading(true);
+  //   // console.log({details});
+  //   const data = {
+  //     username: details?.username,
+  //     mobile: details?.mobile,
+  //     address: details?.address,
+  //   };
+  //   const response = await apiMiddleware({
+  //     url: '/user/update',
+  //     method: 'put',
+  //     contentType: Content_Type.FORM_DATA,
+  //     data: createFormData(data),
+  //     navigation,
+  //   });
+  //   if (response) {
+  //     // console.log({response});
+  //     const getItems: any = await AsyncStorage.getItem('userData');
+  //     const parsedItem: any = await JSON.parse(getItems);
+  //     parsedItem.username = details?.username;
+  //     parsedItem.address = details?.address;
+  //     parsedItem.mobile = details?.mobile;
+  //     successMessage(response.message);
+  //     setIsLoading(false);
+  //     setShow(false);
+  //     const stringifyResponse = await JSON.stringify(parsedItem);
+  //     await AsyncStorage.setItem('userData', stringifyResponse);
+  //   }
+  //   setIsLoading(false);
+  // };
+  // const SelectImageFromGallery = async () => {
+  //   await ImagePicker.openPicker({
+  //     width: 300,
+  //     height: 400,
+  //     cropping: true,
+  //   }).then(async (image: any) => {
+  //     // console.log(image);
+  //     setOpenModal(false);
+  //     await setImage(image);
+  //   });
+  // };
 
-  const selectImgeFromCamera = async () => {
-    await ImagePicker.openCamera({
-      width: 300,
-      height: 400,
-      cropping: true,
-    }).then(async (image: any) => {
-      // console.log(image);
-      setOpenModal(false);
-      await setImage(image);
-    });
-  };
+  // const selectImgeFromCamera = async () => {
+  //   await ImagePicker.openCamera({
+  //     width: 300,
+  //     height: 400,
+  //     cropping: true,
+  //   }).then(async (image: any) => {
+  //     // console.log(image);
+  //     setOpenModal(false);
+  //     await setImage(image);
+  //   });
+  // };
 
   const setImage = async (img: any) => {
     const data = {
@@ -244,13 +244,13 @@ const UserDetailsScreen = () => {
         }}>
         <View style={{alignSelf: 'center', marginTop: responsiveHeight(3)}}>
           <Avatar size={responsiveHeight(15)} rounded source={{uri: images}}>
-            <Avatar.Accessory
+            {/* <Avatar.Accessory
               color={COLOR.PRIMARY_COLOR}
               size={25}
               onPress={() => {
                 setOpenModal(true);
               }}
-            />
+            /> */}
           </Avatar>
         </View>
         <Controller

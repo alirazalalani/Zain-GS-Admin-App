@@ -25,6 +25,7 @@ import {
 import Permissions from './src/utils/permissions';
 import {Platform} from 'react-native';
 import notifee, {EventType} from '@notifee/react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // messaging().setBackgroundMessageHandler(async remoteMessage => {
 //   console.log('Message handled in the background!', remoteMessage);
@@ -146,21 +147,23 @@ const App = () => {
     return null;
   }
   return (
-    <NavigationContainer>
-      <Provider store={store}>
-        {!loading && !data && <StackNavigator />}
-        {!loading && data && <AppStack />}
-        {!isConnected && (
-          <InfoModal
-            message={'No Internet Connection'}
-            Photo={IMAGES.NoInternet}
-            btnText={'Close'}
-            onPress={() => {}}
-          />
-        )}
-        <FlashMessage position="bottom" icon="auto" />
-      </Provider>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Provider store={store}>
+          {!loading && !data && <StackNavigator />}
+          {!loading && data && <AppStack />}
+          {!isConnected && (
+            <InfoModal
+              message={'No Internet Connection'}
+              Photo={IMAGES.NoInternet}
+              btnText={'Close'}
+              onPress={() => {}}
+            />
+          )}
+          <FlashMessage position="bottom" icon="auto" />
+        </Provider>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 

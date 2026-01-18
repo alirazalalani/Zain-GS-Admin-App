@@ -11,14 +11,17 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import ActiveOrderScreen from './ActiveOrderScreen';
 import PendingOrderScreen from './PendingOrderScreen';
 import DeliveredOrderScreen from './DeliveredOrderScreen';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 const Tab = createMaterialTopTabNavigator();
 
 const HomeScreen = () => {
+  const insets = useSafeAreaInsets();
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: COLOR.GREY_BACKGROUND,
+        paddingTop: insets.top,
       }}>
       <StatusBar
         backgroundColor={COLOR.BACKGROUND_COLOR}

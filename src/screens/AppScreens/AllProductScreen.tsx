@@ -24,8 +24,10 @@ import {
 } from 'react-native-responsive-dimensions';
 import {useSelector} from 'react-redux';
 import {selectBasketItems} from '../../redux/Item/itemSlice';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const AllProductScreen = () => {
+  const insets = useSafeAreaInsets();
   const route: any = useRoute();
   const {categoryId, categoryName} = route.params;
   const [allItems, setAllItems] = useState<any>([]);
@@ -81,7 +83,13 @@ const AllProductScreen = () => {
     getItems(0);
   }, []);
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+        },
+      ]}>
       <StatusBar
         backgroundColor={COLOR.BACKGROUND_COLOR}
         barStyle={'dark-content'}

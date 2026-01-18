@@ -27,6 +27,7 @@ import {RootState} from '../../redux/store';
 import {Avatar} from '@rneui/themed';
 import {useForm, Controller} from 'react-hook-form';
 import {Content_Type} from '../../utils/Base_Url';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const ProductDetails = () => {
   const route: any = useRoute();
@@ -112,9 +113,16 @@ const ProductDetails = () => {
   useEffect(() => {
     getProductDetail();
   }, []);
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+        },
+      ]}>
       <StatusBar barStyle={'dark-content'} backgroundColor={'white'} />
       {productData._id && (
         <>

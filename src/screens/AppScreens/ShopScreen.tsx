@@ -18,6 +18,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import {apiMiddleware} from '../../utils/HelperFunction';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const ShopScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -88,8 +89,15 @@ const ShopScreen = () => {
   useEffect(() => {
     getCategories(0);
   }, []);
+  const insets = useSafeAreaInsets();
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+        },
+      ]}>
       <StatusBar
         backgroundColor={COLOR.BACKGROUND_COLOR}
         barStyle={'dark-content'}
