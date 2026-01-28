@@ -61,6 +61,12 @@ export async function onDisplayNotification(data: any) {
         id: 'default',
       },
     },
+    ios: {
+      sound: 'check.mp3',
+      interruptionLevel: 'timeSensitive',
+      critical: true,
+      criticalVolume: 1.0,
+    },
   });
 }
 
